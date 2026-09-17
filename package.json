@@ -1,0 +1,29 @@
+{
+  "name": "set-agent-provider",
+  "version": "0.1.0",
+  "description": "Configure a model provider across all installed AI CLIs with one command",
+  "license": "MIT",
+  "bin": {
+    "set-agent-provider": "bin/set-agent-provider.js"
+  },
+  "main": "src/index.js",
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "cli",
+    "ai",
+    "llm",
+    "provider",
+    "claude",
+    "codex",
+    "opencode",
+    "pi",
+    "dsh"
+  ]
+}
