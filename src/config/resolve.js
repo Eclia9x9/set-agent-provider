@@ -2,12 +2,19 @@
 
 const fs = require('fs');
 const { loadFromSource } = require('./load');
+const { resolveDomain } = require('../domain/resolve');
 const { normalizeConfig } = require('./schema');
 
 async function resolveConfig(args) {
+  if (args.config && args.domain) {
+    throw new Error('Use either -C/--config or -D/--domain, not both.');
+  }
+
   let base = {};
   if (args.config) {
     base = await loadFromSource(args.config);
+  } else if (args.domain) {
+    base = await resolveDomain(args.domain, args.apiKey);
   }
 
   const merged = {
@@ -22,6 +29,8 @@ async function resolveConfig(args) {
   if (!cfg.name) {
     if (args.config && isDomainLike(args.config)) {
       cfg.name = domainOf(args.config);
+    } else if (args.domain) {
+      cfg.name = domainOf(args.domain);
     } else {
       cfg.name = 'local';
     }

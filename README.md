@@ -38,6 +38,7 @@ npx set-agent-provider
 | `--models` | `-M` | Models as strict JSON |
 | `--target` | `-T` | Comma-separated targets: `claude,codex,opencode,pi,dsh` |
 | `--config` | `-C` | Config source: local file, URL, or bare domain |
+| `--domain` | `-D` | Auto-detect a provider from a bare domain |
 | `--status` | | Show the current provider config for each installed CLI |
 | `--help` | `-h` | Show help |
 | `--version` | `-v` | Show version |
@@ -80,6 +81,28 @@ The config file has the same fields as the flags:
 
 Command-line flags override config-file values (e.g. `-C example.com -K sk-other`
 keeps the remote config but uses your key).
+
+### Auto-detect from a domain
+
+`--domain` takes just a bare domain and resolves the provider for you:
+
+```bash
+npx set-agent-provider -D api.deepseek.com
+npx set-agent-provider -D api.deepseek.com -K sk-xxxxxxxx
+```
+
+It probes in this order:
+
+1. `https://{domain}/set-agent-provider-config.json`, then `http://...` — if found,
+   the config is used directly (same shape as `--config`).
+2. Otherwise it detects an OpenAI-compatible API by checking
+   `GET /v1/models` (HTTP 200) and `POST /v1/chat/completions` over `https` then
+   `http`, and uses `{domain}` as the provider name with base URL
+   `{scheme}://{domain}/v1`.
+3. Models are then fetched from `/v1/models` and you pick them interactively.
+
+A present-but-malformed config file is a hard error — only a missing config
+degrades to endpoint detection. `--domain` and `--config` are mutually exclusive.
 
 ## Supported CLIs
 

@@ -4,9 +4,10 @@ const SPEC = {
   '--name': 'name', '--baseUrl': 'baseUrl', '--baseurl': 'baseUrl',
   '--apiKey': 'apiKey', '--apikey': 'apiKey',
   '--models': 'models', '--target': 'target', '--config': 'config',
-  '--status': 'status', '--help': 'help', '--version': 'version',
+  '--domain': 'domain', '--status': 'status', '--help': 'help',
+  '--version': 'version',
   '-N': 'name', '-U': 'baseUrl', '-K': 'apiKey', '-M': 'models',
-  '-T': 'target', '-C': 'config', '-h': 'help', '-v': 'version'
+  '-T': 'target', '-C': 'config', '-D': 'domain', '-h': 'help', '-v': 'version'
 };
 
 const FLAGS = { status: true, help: true, version: true };
