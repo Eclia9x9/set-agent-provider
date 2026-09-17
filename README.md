@@ -85,7 +85,7 @@ keeps the remote config but uses your key).
 
 | Target | Config written |
 |--------|----------------|
-| `claude` | `~/.claude/settings.json` (`ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL`) |
+| `claude` | `~/.claude/settings.json` (`ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_OPUS_MODEL`) |
 | `codex` | `~/.codex/config.toml` (`[model_providers.*]`, `model`, `model_provider`) + `~/.codex/auth.json` |
 | `opencode` | `~/.config/opencode/opencode.json` (`provider.*`, `model`) |
 | `pi` | `~/.pi/agent/models.json` (`providers.*`) |

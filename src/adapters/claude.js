@@ -26,7 +26,12 @@ function write(ctx) {
 
   cfg.env.ANTHROPIC_BASE_URL = stripV1(ctx.baseUrl);
   if (ctx.apiKey) cfg.env.ANTHROPIC_AUTH_TOKEN = ctx.apiKey;
-  if (ctx.defaultModel) cfg.env.ANTHROPIC_MODEL = ctx.defaultModel;
+  if (ctx.defaultModel) {
+    cfg.env.ANTHROPIC_MODEL = ctx.defaultModel;
+    cfg.env.ANTHROPIC_DEFAULT_HAIKU_MODEL = ctx.defaultModel;
+    cfg.env.ANTHROPIC_DEFAULT_SONNET_MODEL = ctx.defaultModel;
+    cfg.env.ANTHROPIC_DEFAULT_OPUS_MODEL = ctx.defaultModel;
+  }
 
   writeJson(f, cfg);
 }
