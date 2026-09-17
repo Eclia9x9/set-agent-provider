@@ -20,7 +20,8 @@ function printSummary(cfg, results) {
     if (r.ok) {
       const b = r.backedUp && r.backedUp.length ? '  [backed up ' + r.backedUp.length + ' file(s)]' : '';
       const d = r.wireApi ? '  [wire_api=' + r.wireApi + ']' : '';
-      lines.push('  OK   ' + r.name + d + b);
+      const u = r.changed === false ? '  [unchanged]' : '';
+      lines.push('  OK   ' + r.name + d + u + b);
     } else if (r.skipped) {
       lines.push('  SKIP ' + r.name + ' — ' + r.error);
     } else {

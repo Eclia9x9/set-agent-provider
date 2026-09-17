@@ -8,16 +8,21 @@ function localTimestamp(d) {
     '_' + p(d.getHours()) + '-' + p(d.getMinutes()) + '-' + p(d.getSeconds());
 }
 
+function backupFile(file, ts) {
+  if (!fs.existsSync(file)) return null;
+  const dest = file + '.bak-' + ts;
+  fs.copyFileSync(file, dest);
+  return dest;
+}
+
 function backupFiles(files) {
   const ts = localTimestamp(new Date());
   const backedUp = [];
   for (const file of files) {
-    if (!fs.existsSync(file)) continue;
-    const dest = file + '.bak-' + ts;
-    fs.copyFileSync(file, dest);
-    backedUp.push(dest);
+    const dest = backupFile(file, ts);
+    if (dest) backedUp.push(dest);
   }
   return backedUp;
 }
 
-module.exports = { backupFiles };
+module.exports = { backupFiles, backupFile, localTimestamp };

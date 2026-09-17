@@ -40,7 +40,7 @@ function write(ctx) {
   }
 
   cfg.providers[ctx.name] = provider;
-  writeJson(f, cfg);
+  return writeJson(f, cfg);
 }
 
 function readStatus() {

@@ -33,7 +33,7 @@ function write(ctx) {
     cfg.env.ANTHROPIC_DEFAULT_OPUS_MODEL = ctx.defaultModel;
   }
 
-  writeJson(f, cfg);
+  return writeJson(f, cfg);
 }
 
 function readStatus() {

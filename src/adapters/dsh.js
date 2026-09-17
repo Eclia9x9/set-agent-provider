@@ -116,14 +116,16 @@ function write(ctx) {
   let settings = exists(sf) ? readText(sf) : '';
   settings = upsertNamespace(settings, NAMESPACE, buildProviderYaml(ctx, ref));
   settings = upsertNamespace(settings, 'agent-default-model', buildDefaultModelYaml(ctx));
-  writeText(sf, settings);
+  let changed = writeText(sf, settings);
 
   if (ctx.apiKey) {
     let credsText = exists(cf) ? readText(cf) : '';
     const parsed = parseCreds(credsText);
     parsed.refs[ref] = ctx.apiKey;
-    writeText(cf, writeCreds(parsed.refs, parsed.recordsRaw));
+    if (writeText(cf, writeCreds(parsed.refs, parsed.recordsRaw))) changed = true;
   }
+
+  return changed;
 }
 
 function readStatus() {

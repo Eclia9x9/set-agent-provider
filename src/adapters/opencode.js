@@ -42,7 +42,7 @@ function write(ctx) {
 
   cfg.provider[ctx.name] = provider;
   if (ctx.defaultModel) cfg.model = ctx.name + '/' + ctx.defaultModel;
-  writeJson(f, cfg);
+  return writeJson(f, cfg);
 }
 
 function readStatus() {

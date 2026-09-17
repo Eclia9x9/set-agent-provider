@@ -129,7 +129,7 @@ function write(ctx) {
   if (topText) parts.push(topText);
   parts.push(section.join('\n'));
   if (restText) parts.push(restText);
-  writeText(f, parts.join('\n\n') + '\n');
+  let changed = writeText(f, parts.join('\n\n') + '\n');
 
   if (ctx.apiKey) {
     const af = authFile();
@@ -139,8 +139,10 @@ function write(ctx) {
     }
     auth.auth_mode = auth.auth_mode || 'apikey';
     auth[ENV_KEY] = ctx.apiKey;
-    writeJson(af, auth);
+    if (writeJson(af, auth)) changed = true;
   }
+
+  return changed;
 }
 
 function readStatus() {

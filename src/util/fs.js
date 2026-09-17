@@ -3,6 +3,12 @@
 const fs = require('fs');
 const path = require('path');
 
+let backupFileHook = null;
+
+function setBackupHook(fn) {
+  backupFileHook = typeof fn === 'function' ? fn : null;
+}
+
 function exists(file) {
   return fs.existsSync(file);
 }
@@ -12,8 +18,15 @@ function readText(file) {
 }
 
 function writeText(file, text) {
+  if (exists(file)) {
+    let current = null;
+    try { current = readText(file); } catch (e) { current = null; }
+    if (current === text) return false;
+    if (backupFileHook) backupFileHook(file);
+  }
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, text, 'utf8');
+  return true;
 }
 
 function readJson(file) {
@@ -21,7 +34,7 @@ function readJson(file) {
 }
 
 function writeJson(file, obj) {
-  writeText(file, JSON.stringify(obj, null, 2) + '\n');
+  return writeText(file, JSON.stringify(obj, null, 2) + '\n');
 }
 
-module.exports = { exists, readText, writeText, readJson, writeJson };
+module.exports = { exists, readText, writeText, readJson, writeJson, setBackupHook };
