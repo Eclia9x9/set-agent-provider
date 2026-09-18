@@ -1,10 +1,7 @@
 'use strict';
 
 const readline = require('readline');
-
-function isInteractive() {
-  return Boolean(process.stdin.isTTY && process.stdout.isTTY);
-}
+const { isInteractive } = require('../cli/prompt');
 
 async function multiSelect(items) {
   if (!items.length) return [];

@@ -2,22 +2,23 @@
 
 const fs = require('fs');
 const { get } = require('../util/http');
+const { normalizeConfig } = require('./schema');
 
 const CONFIG_PATH = '/set-agent-provider-config.json';
 
-async function loadFromSource(source) {
+async function loadConfigSource(source) {
   if (!source) return {};
   if (/^https?:\/\//i.test(source)) {
-    return fetchConfigUrl(source);
+    return normalizeConfig(await fetchConfigUrl(source));
   }
   if (fs.existsSync(source)) {
-    return parseJsonFile(source);
+    return normalizeConfig(parseJson(fs.readFileSync(source, 'utf8'), source));
   }
   const domain = String(source).replace(/\/+$/, '');
   let lastErr;
   for (const scheme of ['https', 'http']) {
     try {
-      return await fetchConfigUrl(scheme + '://' + domain + CONFIG_PATH);
+      return normalizeConfig(await fetchConfigUrl(scheme + '://' + domain + CONFIG_PATH));
     } catch (e) {
       lastErr = e;
     }
@@ -38,10 +39,6 @@ async function fetchConfigUrl(url) {
   return parseJson(res.body, url);
 }
 
-function parseJsonFile(file) {
-  return parseJson(fs.readFileSync(file, 'utf8'), file);
-}
-
 function parseJson(text, label) {
   try {
     return JSON.parse(text);
@@ -50,8 +47,4 @@ function parseJson(text, label) {
   }
 }
 
-function isRemoteSource(source) {
-  return /^https?:\/\//i.test(source) || (source && !fs.existsSync(source) && !/\.(json)$/i.test(source));
-}
-
-module.exports = { loadFromSource, isRemoteSource };
+module.exports = { loadConfigSource: loadConfigSource, CONFIG_PATH: CONFIG_PATH };

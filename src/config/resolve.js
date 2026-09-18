@@ -1,62 +1,58 @@
 'use strict';
 
-const fs = require('fs');
-const { loadFromSource } = require('./load');
-const { resolveDomain } = require('../domain/resolve');
-const { normalizeConfig } = require('./schema');
+const { resolveBaseUrl } = require('./baseurl');
+const { resolveName } = require('./name');
+const { parseModels } = require('./schema');
+const { askApiKey } = require('../cli/prompt');
+const { fetchModels } = require('../models/fetch');
+const { multiSelect } = require('../models/select');
 
 async function resolveConfig(args) {
-  if (args.config && args.domain) {
-    throw new Error('Use either -C/--config or -D/--domain, not both.');
-  }
+  const resolved = await resolveBaseUrl(args);
+  const config = resolved.config;
+  const baseUrl = resolved.baseUrl;
 
-  let base = {};
-  if (args.config) {
-    base = await loadFromSource(args.config);
-  } else if (args.domain) {
-    base = await resolveDomain(args.domain, args.apiKey);
-  }
+  const apiKey = await resolveApiKey(args, config);
+  const models = await resolveModels(args, config, baseUrl, apiKey);
+  const name = resolveName(args, config, baseUrl);
 
-  const merged = {
-    name: args.name != null ? args.name : base.name,
-    baseUrl: args.baseUrl != null ? args.baseUrl : base.baseUrl,
-    apiKey: args.apiKey != null ? args.apiKey : base.apiKey,
-    models: args.models != null ? parseModelsArg(args.models) : base.models
+  return {
+    name: name,
+    baseUrl: baseUrl,
+    apiKey: apiKey,
+    models: models
   };
+}
 
-  const cfg = normalizeConfig(merged);
+async function resolveApiKey(args, config) {
+  if (args.apiKey != null) return args.apiKey;
+  if (config && config.apiKey) return config.apiKey;
+  return askApiKey();
+}
 
-  if (!cfg.name) {
-    if (args.config && isDomainLike(args.config)) {
-      cfg.name = domainOf(args.config);
-    } else if (args.domain) {
-      cfg.name = domainOf(args.domain);
-    } else {
-      cfg.name = 'local';
-    }
+async function resolveModels(args, config, baseUrl, apiKey) {
+  if (args.models != null) return parseModelsArg(args.models);
+  if (config && config.models) return config.models;
+
+  const fetched = await fetchModels(baseUrl, apiKey);
+  if (!fetched.length) {
+    throw new Error('No models returned from ' + baseUrl + ' (use -M/--models to provide them).');
   }
-  return cfg;
+  const picked = await multiSelect(fetched);
+  if (!picked.length) {
+    throw new Error('No models selected.');
+  }
+  return parseModels(picked);
 }
 
 function parseModelsArg(str) {
+  let raw;
   try {
-    return JSON.parse(str);
+    raw = JSON.parse(str);
   } catch (e) {
     throw new Error('Invalid JSON for --models: ' + e.message);
   }
+  return parseModels(raw);
 }
 
-function isDomainLike(source) {
-  if (/^https?:\/\//i.test(source)) return true;
-  if (fs.existsSync(source)) return false;
-  return /\./.test(source);
-}
-
-function domainOf(source) {
-  if (/^https?:\/\//i.test(source)) {
-    try { return new URL(source).hostname; } catch (e) { return source; }
-  }
-  return String(source).replace(/\/+$/, '').split('/')[0];
-}
-
-module.exports = { resolveConfig };
+module.exports = { resolveConfig: resolveConfig };

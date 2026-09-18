@@ -3,10 +3,8 @@
 const { parseArgs } = require('./cli/args');
 const { printHelp } = require('./cli/help');
 const { resolveConfig } = require('./config/resolve');
-const { parseModels } = require('./config/schema');
-const { fetchModels } = require('./models/fetch');
-const { multiSelect, promptDefault, isInteractive } = require('./models/select');
-const { runWizard } = require('./cli/wizard');
+const { promptDefault, isInteractive } = require('./models/select');
+const { confirm } = require('./cli/prompt');
 const { runStatus } = require('./status');
 const { applyProvider } = require('./apply');
 const { printSummary } = require('./output');
@@ -27,32 +25,14 @@ async function run(argv) {
     return;
   }
 
-  let cfg = await resolveConfig(args);
+  const cfg = await resolveConfig(args);
 
-  const noArgs = argv.length === 0;
-  if ((noArgs || !cfg.baseUrl) && isInteractive()) {
-    const res = await runWizard(cfg);
-    if (res.cancelled) {
+  if (isInteractive()) {
+    const ok = await confirm(cfg);
+    if (!ok) {
       process.stdout.write('Aborted.\n');
       return;
     }
-    cfg = res.cfg;
-  }
-
-  if (!cfg.baseUrl) {
-    throw new Error('baseUrl is required. Provide -U/--baseUrl or a --config source.');
-  }
-
-  if (!cfg.models || !cfg.models.length) {
-    const fetched = await fetchModels(cfg.baseUrl, cfg.apiKey);
-    if (!fetched.length) {
-      throw new Error('No models returned from ' + cfg.baseUrl + ' (use -M/--models to provide them).');
-    }
-    const picked = await multiSelect(fetched);
-    if (!picked.length) {
-      throw new Error('No models selected.');
-    }
-    cfg.models = parseModels(picked);
   }
 
   const defaultModel = (await promptDefault(cfg.models)) || cfg.models[0].id;
