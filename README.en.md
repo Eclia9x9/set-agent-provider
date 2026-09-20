@@ -86,7 +86,6 @@ The config file has the same fields as the flags:
 {
   "name": "example",
   "baseUrl": "https://api.example.com/v1",
-  "apiKey": "sk-xxxxxxxx",
   "models": [
     { "id": "gpt-5.6-sol", "name": "GPT-5.6 SOL", "reasoning": true, "limit": { "context": 272000, "output": 128000 } }
   ]
@@ -134,6 +133,11 @@ exclusive; `-U` can be combined and takes precedence.
 | `dsh` | `~/.dsh/settings.yaml` (`llm-pi-ai`, `agent-default-model`) + `~/.dsh/.credentials.yaml` |
 
 By default every installed CLI is configured. Use `--target` to limit it.
+
+```bash
+npx set-agent-provider -D api.deepseek.com -T claude
+npx set-agent-provider -N foo -U https://api.example.com/v1 -T claude,codex
+```
 
 ## Safety
 
