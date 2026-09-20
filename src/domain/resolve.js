@@ -62,11 +62,6 @@ async function probeChat(host, apiKey) {
     const res = await postSafe(origin + '/v1/chat/completions', apiKey);
     if (!res) continue;
     if (NON_EXISTENT.indexOf(res.status) !== -1) continue;
-    try {
-      JSON.parse(res.body);
-    } catch (e) {
-      continue;
-    }
     return origin + '/v1';
   }
   return null;
