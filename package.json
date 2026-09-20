@@ -1,6 +1,6 @@
 {
   "name": "set-agent-provider",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Configure a model provider across all installed AI CLIs with one command",
   "license": "MIT",
   "author": "Eclia9x9",
