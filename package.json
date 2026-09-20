@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "description": "Configure a model provider across all installed AI CLIs with one command",
   "license": "MIT",
+  "author": "Eclia9x9",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eclia9x9/set-agent-provider.git"
+  },
+  "homepage": "https://github.com/Eclia9x9/set-agent-provider#readme",
+  "bugs": {
+    "url": "https://github.com/Eclia9x9/set-agent-provider/issues"
+  },
   "bin": {
     "set-agent-provider": "bin/set-agent-provider.js"
   },

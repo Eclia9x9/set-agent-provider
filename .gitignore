@@ -1,2 +1,6 @@
 .planning/
 .codegraph/
+node_modules/
+*.tgz
+dsh-ui-auth-audit.jsonl
+dsh-ui-auth-sessions.json
